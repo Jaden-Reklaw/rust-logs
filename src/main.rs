@@ -8,18 +8,10 @@ fn extract_errors(text: &str) -> Vec<&str> {
         .collect()
 }
 
+//You can return something from main
 fn main() {
-    match fs::read_to_string("logs.txt") {
-        Ok(content) => {
-            let errors_log = extract_errors(content.as_str());
-            
-            match fs::write("errors.txt", errors_log.join("\n")) {
-                Ok(_) => println!("Errors written to errors.txt"),
-                Err(error) => println!("Error writing file: {}", error)
-            }
-        },
-        Err(error) => {
-            println!("Error reading file: {}", error);
-        }
-    }
+    let text = fs::read_to_string("logs.txt").expect("Error reading file");
+    let errors_log = extract_errors(text.as_str());
+    fs::write("errors.txt", errors_log.join("\n"))
+    .expect("Error writing file");
 }
