@@ -1,26 +1,25 @@
 use std::fs;
 
 
-fn extract_errors(text: &str) -> Vec<String> {
+fn extract_errors(text: &str) -> Vec<&str> {
     text.split('\n')
         .filter(|line | line.starts_with("ERROR"))
-        .map(|s| s.to_string())
+        .map(|line| line)
         .collect()
 }
 
 fn main() {
-
-    let mut errors_log = Vec::new();
-
     match fs::read_to_string("logs.txt") {
         Ok(content) => {
-            errors_log = extract_errors(content.as_str());
+            let errors_log = extract_errors(content.as_str());
+            
+            match fs::write("errors.txt", errors_log.join("\n")) {
+                Ok(_) => println!("Errors written to errors.txt"),
+                Err(error) => println!("Error writing file: {}", error)
+            }
         },
         Err(error) => {
             println!("Error reading file: {}", error);
         }
     }
-
-    println!("Errors: {:#?}", errors_log);
-    
 }
